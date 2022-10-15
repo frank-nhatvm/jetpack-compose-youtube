@@ -1,12 +1,13 @@
 package com.frank.jetpackcomposeyoutube
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,10 +24,85 @@ import androidx.constraintlayout.compose.Dimension
 import com.frank.jetpackcomposeyoutube.ui.theme.JetpackComposeYoutubeTheme
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun VideoDetailScreen(modifier: Modifier = Modifier, openCategoryScreen: () -> Unit) {
 
+    val listVideos = fakeVideoData()
+    val listState = rememberLazyListState()
+    val isShowFilterCategory by remember {
+        derivedStateOf { listState.firstVisibleItemIndex > 0 }
+    }
+
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier.fillMaxSize(),
+        state = listState
+    ) {
+        stickyHeader {
+            VideoDetail(
+                videoThumb = R.drawable.video_thumbnail,
+                videoTitle = "Jetpack Compose List And Grid",
+                views = 1000,
+                timeAgo = "100 years ago", isShowFilterCategory = isShowFilterCategory,
+                openCategoryScreen = openCategoryScreen
+            )
+        }
+        items(listVideos) { video ->
+            NextVideo(videoTitle = video.videoTitle, views = video.views, timeAgo = video.timeAgo)
+        }
+
+
+    }
+
 }
+
+fun fakeVideoData(): List<Video> {
+    val list = mutableListOf<Video>()
+    for (index in 0..10) {
+        val video = Video(videoTitle = "Video $index", views = index, timeAgo = "$index days")
+        list.add(video)
+    }
+    return list
+}
+
+@Composable
+fun FilterCategory(modifier: Modifier = Modifier, openCategoryScreen: () -> Unit) {
+    val listCategories = fakeCategory()
+    LazyRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(24.dp),
+        contentPadding = PaddingValues(horizontal = 12.dp)
+    ) {
+        items(listCategories) { category ->
+            Text(
+                text = category.name,
+                modifier = Modifier
+                    .background(color = Color.Gray.copy(alpha = 0.2f))
+                    .border(
+                        BorderStroke(
+                            width = 1.dp,
+                            color = Color.Gray
+                        )
+                    )
+                    .clip(CircleShape)
+                    .clickable {
+                        openCategoryScreen()
+                    }
+            )
+        }
+    }
+}
+
+fun fakeCategory(): List<VideoCategory> {
+    val list = mutableListOf<VideoCategory>()
+    for (index in 0..20) {
+        val category = VideoCategory(id = index, name = "Category $index")
+        list.add(category)
+    }
+    return list
+}
+
 
 @Composable
 fun VideoActionItem(modifier: Modifier = Modifier, @DrawableRes icon: Int, name: String) {
@@ -111,7 +187,9 @@ fun VideoDetail(
     @DrawableRes videoThumb: Int,
     videoTitle: String,
     views: Int,
-    timeAgo: String
+    timeAgo: String,
+    isShowFilterCategory: Boolean,
+    openCategoryScreen: () -> Unit
 ) {
 
     Column(modifier = modifier.fillMaxWidth()) {
@@ -126,17 +204,29 @@ fun VideoDetail(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .background(color = Color.White)
                 .padding(top = 12.dp)
         ) {
+            if (isShowFilterCategory) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp)
+                        .background(color = Color.White)
+                ) {
+                    FilterCategory(openCategoryScreen = openCategoryScreen)
+                }
+            } else {
+                VideoDetailInfo(
+                    videoTitle = videoTitle,
+                    views = views,
+                    timeAgo = timeAgo,
+                    modifier = Modifier.padding(horizontal = 12.dp)
+                )
 
-            VideoDetailInfo(
-                videoTitle = videoTitle,
-                views = views,
-                timeAgo = timeAgo,
-                modifier = Modifier.padding(horizontal = 12.dp)
-            )
+                VideoAction()
+            }
 
-            VideoAction()
 
         }
 
@@ -229,45 +319,50 @@ fun NextVideo(videoTitle: String, views: Int, timeAgo: String, modifier: Modifie
 }
 
 
+//@Composable
+//@Preview(name = "Video Info Item Preview", showBackground = true)
+//fun VideoActionItemPreview() {
+//    JetpackComposeYoutubeTheme {
+//        VideoActionItem(icon = R.drawable.ic_thumbup, name = "25.6K")
+//    }
+//}
+//
+//@Composable
+//@Preview(name = "Video Info Preview", showBackground = true)
+//fun VideoActionPreview() {
+//    JetpackComposeYoutubeTheme {
+//        VideoAction()
+//    }
+//}
+//
+//@Composable
+//@Preview(name = "video detail preview", showBackground = true)
+//fun VideoDetailPreview() {
+//    VideoDetail(
+//        videoThumb = R.drawable.video_thumbnail,
+//        videoTitle = "Android Jetpack Compose List and Grid",
+//        views = 999,
+//        timeAgo = "1 day ago"
+//    )
+//}
+//
+//@Composable
+//@Preview(name = "Next video preview", showBackground = true)
+//fun NextVideoPreview() {
+//    NextVideo(videoTitle = "Jetpack Compose Basic Layout", views = 22, timeAgo = " 20 years ago")
+//}
 
-@Composable
-@Preview(name = "Video Info Item Preview", showBackground = true)
-fun VideoActionItemPreview() {
-    JetpackComposeYoutubeTheme {
-        VideoActionItem(icon = R.drawable.ic_thumbup, name = "25.6K")
-    }
-}
-
-@Composable
-@Preview(name = "Video Info Preview", showBackground = true)
-fun VideoActionPreview() {
-    JetpackComposeYoutubeTheme {
-        VideoAction()
-    }
-}
-
-@Composable
-@Preview(name = "video detail preview", showBackground = true)
-fun VideoDetailPreview() {
-    VideoDetail(
-        videoThumb = R.drawable.video_thumbnail,
-        videoTitle = "Android Jetpack Compose List and Grid",
-        views = 999,
-        timeAgo = "1 day ago"
-    )
-}
-
-@Composable
-@Preview(name = "Next video preview", showBackground = true)
-fun NextVideoPreview() {
-    NextVideo(videoTitle = "Jetpack Compose Basic Layout", views = 22, timeAgo = " 20 years ago")
-}
+//@Composable
+//@Preview(name = "Filter category Preview", showBackground = true)
+//fun FilterCategoryPreview() {
+//    FilterCategory()
+//}
 
 @Composable
 @Preview(name = "Video Detail Preview", showSystemUi = true, showBackground = true)
 fun VideoDetailScreenPreview() {
     JetpackComposeYoutubeTheme {
-        VideoDetailScreen(){
+        VideoDetailScreen() {
 
         }
     }
