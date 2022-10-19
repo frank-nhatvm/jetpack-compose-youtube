@@ -18,12 +18,12 @@ fun MyAccountScreen(navController: NavController, openAddressScreen: (String?) -
         mutableStateOf("")
     }
 
-//    val newAddressId =
-//        navController.currentBackStackEntry?.savedStateHandle?.getLiveData<String>("new_address_id")
-//            ?.observeAsState()
-//    newAddressId?.value?.let {
-//        addressId = it
-//    }
+    val newAddressId =
+        navController.currentBackStackEntry?.savedStateHandle?.getLiveData<String>("new_address_id")
+            ?.observeAsState()
+    newAddressId?.value?.let {
+        addressId = it
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()

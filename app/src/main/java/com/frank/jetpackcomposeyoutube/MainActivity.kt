@@ -38,5 +38,90 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainApp() {
+    val navController = rememberNavController()
+    JetpackComposeYoutubeTheme {
+        NavHost(navController = navController, startDestination = "home") {
 
+            composable(route = "home") {
+                HomeScreen(
+                    openCategoryAction = {
+                        navController.navigate("category")
+                    },
+                    openMyAccountScreen = {
+                        navController.navigate("myAccount")
+                    },
+                    editCustomerInfo = {
+                        navController.navigate("customer")
+                    }
+                )
+            }
+
+            composable(route = "category") {
+                CategoryScreen() { productId ->
+                    navController.navigate("product/$productId")
+                }
+            }
+
+            // route
+            // NamedNavArgument : a quick way to create new one is using navArgument
+            composable(route = "product/{productId}", arguments = listOf(navArgument("productId") {
+                type = NavType.StringType
+            })) { backStackEntry ->
+                val productId = backStackEntry.arguments?.getString("productId")
+                requireNotNull(productId)
+                ProductDetailScreen(productId = productId){
+                        cartId,customerId->
+                    navController.navigate("checkout/$cartId/$customerId")
+                }
+            }
+
+            navigation(startDestination = "myAccount", route = "customer") {
+                composable(route = "myAccount") {
+                    MyAccountScreen(
+                        navController = navController,
+                        openAddressScreen = { addressId ->
+                            val route =
+                                if (addressId != null) "addressDetail?addressId=$addressId" else "addressDetail"
+                            navController.navigate(route)
+                        })
+                }
+
+                composable(
+                    route = "addressDetail?addressId={addressId}",
+                    arguments = listOf(navArgument("addressId") {
+                        nullable = true
+                    })
+                ) { backStackEntry ->
+                    val addressId = backStackEntry.arguments?.getString("addressId")
+                    AddressDetailScreen(addressId = addressId) {
+                        navController.previousBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("new_address_id", it)
+                        navController.popBackStack()
+                    }
+                }
+
+                composable(route = "customerInfo") {
+                    CustomerInfoScreen() {
+                        navController.popBackStack()
+                    }
+                }
+
+            }
+
+            composable(
+                route = "checkout/{cartId}/{customerId}",
+                arguments = listOf(
+                    navArgument("cartId") { type = NavType.StringType },
+                    navArgument("customerId") { type = NavType.StringType })
+            ) {backStackEntry ->
+                val cartId = backStackEntry.arguments?.getString("cartId")
+                val customerId = backStackEntry.arguments?.getString("customerId")
+                requireNotNull(cartId)
+                requireNotNull(customerId)
+                CheckoutScreen(cartId = cartId, customerId = customerId)
+            }
+
+        }
+    }
 }
