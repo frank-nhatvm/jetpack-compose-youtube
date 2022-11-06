@@ -19,6 +19,7 @@ import androidx.navigation.navigation
 import com.frank.jetpackcomposeyoutube.ui.catalog.category.CategoryScreen
 import com.frank.jetpackcomposeyoutube.ui.catalog.product.ProductDetailScreen
 import com.frank.jetpackcomposeyoutube.ui.checkout.CheckoutScreen
+import com.frank.jetpackcomposeyoutube.ui.checkout.CheckoutSuccessScreen
 import com.frank.jetpackcomposeyoutube.ui.customer.AddressDetailScreen
 import com.frank.jetpackcomposeyoutube.ui.customer.CustomerInfoScreen
 import com.frank.jetpackcomposeyoutube.ui.customer.MyAccountScreen
@@ -69,8 +70,7 @@ fun MainApp() {
             })) { backStackEntry ->
                 val productId = backStackEntry.arguments?.getString("productId")
                 requireNotNull(productId)
-                ProductDetailScreen(productId = productId){
-                        cartId,customerId->
+                ProductDetailScreen(productId = productId) { cartId, customerId ->
                     navController.navigate("checkout/$cartId/$customerId")
                 }
             }
@@ -114,12 +114,22 @@ fun MainApp() {
                 arguments = listOf(
                     navArgument("cartId") { type = NavType.StringType },
                     navArgument("customerId") { type = NavType.StringType })
-            ) {backStackEntry ->
+            ) { backStackEntry ->
                 val cartId = backStackEntry.arguments?.getString("cartId")
                 val customerId = backStackEntry.arguments?.getString("customerId")
                 requireNotNull(cartId)
                 requireNotNull(customerId)
-                CheckoutScreen(cartId = cartId, customerId = customerId)
+                CheckoutScreen(cartId = cartId, customerId = customerId) {
+                    navController.navigate("checkoutSuccess")
+                }
+            }
+
+            composable(route = "checkoutSuccess") {
+                CheckoutSuccessScreen(goHomeAction = {
+                    navController.popBackStack(route = "home", inclusive = false, saveState = true)
+                }, viewOrderDetailAction = {
+
+                })
             }
 
         }
