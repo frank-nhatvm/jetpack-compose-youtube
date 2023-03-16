@@ -1,6 +1,12 @@
 package com.frank.jetpackcomposeyoutube
 
+import android.graphics.Canvas
+import android.graphics.SurfaceTexture
 import android.os.Bundle
+import android.view.Surface
+import android.view.TextureView
+import android.view.View
+import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
