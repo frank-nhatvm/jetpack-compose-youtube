@@ -2,9 +2,7 @@ package com.frank.jetpackcomposeyoutube
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -16,10 +14,9 @@ import com.frank.jetpackcomposeyoutube.ui.detail.DetailViewModel
 import com.frank.jetpackcomposeyoutube.ui.home.HomeScreen
 import com.frank.jetpackcomposeyoutube.ui.list.ListScreen
 import com.frank.jetpackcomposeyoutube.ui.main.MainRoute
+import com.frank.jetpackcomposeyoutube.ui.profile.LoginScreen
 import com.frank.jetpackcomposeyoutube.ui.profile.ProfileRoute
-import com.frank.jetpackcomposeyoutube.ui.profile.ProfileViewModel
 import com.frank.jetpackcomposeyoutube.ui.register.RegisterRoute
-import com.frank.jetpackcomposeyoutube.ui.register.RegisterViewModel
 import com.frank.jetpackcomposeyoutube.ui.theme.JetpackComposeYoutubeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,8 +29,11 @@ class MainActivity: ComponentActivity() {
 
 
             JetpackComposeYoutubeTheme {
-                NavHost(navController = navController, startDestination = "/") {
+                NavHost(navController = navController, startDestination = "login/") {
 
+                    composable("login/") {
+                        LoginScreen()
+                    }
 
                     composable(route = "/") {
                         MainRoute(
@@ -91,7 +91,3 @@ class MainActivity: ComponentActivity() {
     }
 
 }
-
-
-
-
