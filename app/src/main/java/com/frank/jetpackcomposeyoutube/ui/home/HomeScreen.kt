@@ -1,6 +1,10 @@
 package com.frank.jetpackcomposeyoutube.ui.home
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -10,7 +14,12 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun HomeScreen(openCategoryAction: () -> Unit, openMyAccountScreen: () -> Unit,editCustomerInfo: ()->Unit) {
+fun HomeScreen(
+    openCategoryAction: () -> Unit,
+    openMyAccountScreen: () -> Unit,
+    editCustomerInfo: () -> Unit,
+    openAddressBook: () -> Unit
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -32,6 +41,12 @@ fun HomeScreen(openCategoryAction: () -> Unit, openMyAccountScreen: () -> Unit,e
             editCustomerInfo()
         }) {
             Text(text = "Edit customer information")
+        }
+        Spacer(modifier = Modifier.height(24.dp))
+        Button(onClick = {
+            openAddressBook()
+        }) {
+            Text("AddressBook")
         }
     }
 }

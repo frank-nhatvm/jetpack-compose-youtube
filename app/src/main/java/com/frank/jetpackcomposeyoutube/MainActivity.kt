@@ -3,13 +3,7 @@ package com.frank.jetpackcomposeyoutube
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -20,16 +14,20 @@ import com.frank.jetpackcomposeyoutube.ui.catalog.category.CategoryScreen
 import com.frank.jetpackcomposeyoutube.ui.catalog.product.ProductDetailScreen
 import com.frank.jetpackcomposeyoutube.ui.checkout.CheckoutScreen
 import com.frank.jetpackcomposeyoutube.ui.checkout.CheckoutSuccessScreen
+import com.frank.jetpackcomposeyoutube.ui.customer.Address
+import com.frank.jetpackcomposeyoutube.ui.customer.AddressBookNavigation
+import com.frank.jetpackcomposeyoutube.ui.customer.AddressBookScreen
 import com.frank.jetpackcomposeyoutube.ui.customer.AddressDetailScreen
+import com.frank.jetpackcomposeyoutube.ui.customer.AddressNavType
 import com.frank.jetpackcomposeyoutube.ui.customer.CustomerInfoScreen
 import com.frank.jetpackcomposeyoutube.ui.customer.MyAccountScreen
 import com.frank.jetpackcomposeyoutube.ui.home.HomeScreen
 import com.frank.jetpackcomposeyoutube.ui.theme.JetpackComposeYoutubeTheme
 
-class MainActivity : ComponentActivity() {
+class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
+
         setContent {
             MainApp()
         }
@@ -53,8 +51,24 @@ fun MainApp() {
                     },
                     editCustomerInfo = {
                         navController.navigate("customer")
+                    },
+                    openAddressBook = {
+                        val address = Address(id = 1, street = "hoang hoa tham", city = "ha noi")
+                        navController.navigate(AddressBookNavigation.createRoute(address))
                     }
                 )
+            }
+
+            composable(route = AddressBookNavigation.route, arguments = listOf(
+                navArgument(AddressBookNavigation.addressArg) {
+                    nullable = true
+                    type = AddressNavType()
+                }
+            )) {
+                val address = AddressBookNavigation.fromNav(it)
+                AddressBookScreen(addresses = listOf(address)) {
+                    navController.popBackStack()
+                }
             }
 
             composable(route = "category") {

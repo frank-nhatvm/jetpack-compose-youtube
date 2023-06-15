@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-parcelize'
+
 }
 
 android {
@@ -8,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.frank.jetpackcomposeyoutube"
-        minSdk 23
+        minSdk 26
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -65,5 +67,7 @@ dependencies {
     def nav_version = "2.5.2"
 
     implementation("androidx.navigation:navigation-compose:$nav_version")
+
+    implementation "com.squareup.moshi:moshi-kotlin:1.13.0"
 
 }
